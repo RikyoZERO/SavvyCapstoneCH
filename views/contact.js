@@ -1,5 +1,4 @@
 import html from "html-literal";
-import * as views from ".";
 export default () => html`
     <main>
   <h2>Drop Us a Line!</h2>
