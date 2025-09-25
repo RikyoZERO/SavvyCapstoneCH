@@ -3,10 +3,8 @@ import * as store from "./store";
 import Navigo from "navigo";
 import { camelCase } from "lodash";
 import axios from "axios";
-import dotenv from "dotenv";
 
 const router = new Navigo("/");
-dotenv.config();
 
 function render(state = store.home) {
   document.querySelector("#root").innerHTML = `
@@ -24,11 +22,12 @@ router.hooks({
       case "home":
         axios
           .get(
-            `${process.env.RANDOM_DUCK_IMAGE}/random`
+            `${process.env.API_URL}/duckphoto`
+            // "http://localhost:3000/duckphoto"
           )
           .then(response => {
             //  "https://random-d.uk/api/492.jpg" THIS WILL NEED TO BE CHANGED TO response.data.url
-            store.home.duckImage = response.data.url
+            store.home.duckImage = response.data
             // store.home.duckImage =
             //   "https://random-d.uk/api/492.jpg"
           
