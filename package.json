@@ -2,9 +2,11 @@
   "name": "savvy-starter",
   "version": "1.0.0",
   "description": "",
+  "type":"module",
   "scripts": {
     "build": "parcel build index.html && cp _redirects ./dist/",
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "app:watch": "nodemon --watch ./server -e js ./server/app.js"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +31,7 @@
   },
   "dependencies": {
     "axios": "^1.12.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "html-literal": "^1.1.0",

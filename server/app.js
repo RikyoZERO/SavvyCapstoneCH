@@ -2,6 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import mongoose, { mongo } from "mongoose";
+import axios from "axios";
 
 // Initialize the Express application
 const app = express();
@@ -47,6 +48,11 @@ app.get("/status", (request, response) => {
   response.json({ message: "Service healthy" });
 });
 
+app.get("/duckphoto", async (request, response) => {
+  const duckPhoto = await axios.get(`https://random-d.uk/api/random`)
+  response.json(duckPhoto.data.url);
+})
+
 // Handle the request with HTTP GET method with query parameters and a url parameter
 app.get("/weather/:city", (request, response) => {
   // Express adds a "params" Object to requests that has an matches parameter created using the colon syntax
@@ -58,7 +64,6 @@ app.get("/weather/:city", (request, response) => {
   if ("lowtemp" in request.query) {
     lowTemp = Number(request.query.lowtemp);
   }
-
 
   // Generate a random number to use as the temperature
   // Reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values_inclusive
