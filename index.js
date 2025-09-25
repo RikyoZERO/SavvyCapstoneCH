@@ -15,6 +15,48 @@ function render(state = store.home) {
   `;
   // router.updatePageLinks();
 }
+router.hooks({
+  before: (done, params) => {
+    const view = params?.data?.view ? camelCase(params.data.view) : "home";
+ switch (view) {
+      case "home":
+        axios
+          .get(
+            `${process.env.RANDOM_DUCK_IMAGE}/random`
+          )
+          .then(response => {
+            //  "https://random-d.uk/api/492.jpg" THIS WILL NEED TO BE CHANGED TO response.data.url
+            store.home.duckImage =
+              "https://random-d.uk/api/492.jpg"
+          
+            console.log(response)
+            
+            done();
+          })
+          .catch((err) => {
+            console.log(err);
+            done();
+          });
+        break;
+      default:
+        done();
+    }
+  },
+already: (match) => {
+    const view = match?.data?.view ? camelCase(match.data.view) : "home";
+
+    render(store[view]);
+  },
+  after: (match) => {
+    router.updatePageLinks();
+
+    // add menu toggle to bars icon in nav bar
+    document.querySelector(".fa-bars").addEventListener("click", () => {
+        document.querySelector("nav > ul").classList.toggle("hidden--mobile");
+    });
+  }
+});  
+
 router.on({
   "/": () => render(),
   // The :view slot will match any single URL segment that appears directly after the domain name and a slash
