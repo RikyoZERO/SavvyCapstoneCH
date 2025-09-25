@@ -1,4 +1,6 @@
 export default {
-  header: "Daily Duck Up",
-  view: "home"
+  header: "#DailyDuckUp",
+  view: "home",
+  duckImage: "",
+
 };
