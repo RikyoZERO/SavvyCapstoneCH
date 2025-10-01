@@ -3,13 +3,14 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose, { mongo } from "mongoose";
 import axios from "axios";
+import comments from "./controllers/comments.js";
 
 // Initialize the Express application
 const app = express();
 
 dotenv.config();
 
-mongoose.connect( process.env.MONGODB );
+mongoose.connect(process.env.MONGODB);
 const db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "Connection Error:"));
@@ -24,7 +25,7 @@ const logging = (request, response, next) => {
   console.log(`${request.method} ${request.url} ${new Date().toLocaleString("en-us")}`);
   next();
 };
- 
+
 app.use(cors());
 app.use(express.json());
 app.use(logging);
@@ -37,14 +38,14 @@ app.use(logging);
 
 // Handle the request with HTTP GET method from http://localhost:3000/
 app.get("/", (request, response) => {
-   response.send("Welcome to the Class SPA REST API");
+  response.send("Welcome to the Class SPA REST API");
 });
 
 // Handle the request with HTTP GET method from http://localhost:3000/status
 app.get("/status", (request, response) => {
-   // Create the headers for response by default 200
-   // Create the response body
-   // End and return the response
+  // Create the headers for response by default 200
+  // Create the response body
+  // End and return the response
   response.json({ message: "Service healthy" });
 });
 
@@ -81,6 +82,7 @@ app.get("/weather/:city", (request, response) => {
     city
   });
 });
+app.use("/comments", comments);
 
 // Tell the Express app to start listening
 // Let the humans know I am running and listening on 3000

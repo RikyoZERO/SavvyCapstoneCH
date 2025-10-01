@@ -1,4 +1,4 @@
-import {header, nav, main, footer } from "./components";
+import { header, nav, main, footer } from "./components";
 import * as store from "./store";
 import Navigo from "navigo";
 import { camelCase } from "lodash";
@@ -18,7 +18,7 @@ function render(state = store.home) {
 router.hooks({
   before: (done, params) => {
     const view = params?.data?.view ? camelCase(params.data.view) : "home";
- switch (view) {
+    switch (view) {
       case "home":
         axios
           .get(
@@ -30,9 +30,9 @@ router.hooks({
             store.home.duckImage = response.data
             // store.home.duckImage =
             //   "https://random-d.uk/api/492.jpg"
-          
+
             console.log(response)
-            
+
             done();
           })
           .catch((err) => {
@@ -44,7 +44,7 @@ router.hooks({
         done();
     }
   },
-already: (match) => {
+  already: (match) => {
     const view = match?.data?.view ? camelCase(match.data.view) : "home";
 
     render(store[view]);
@@ -54,10 +54,50 @@ already: (match) => {
 
     // add menu toggle to bars icon in nav bar
     document.querySelector(".fa-bars").addEventListener("click", () => {
-        document.querySelector("nav > ul").classList.toggle("hidden--mobile");
+      document.querySelector("nav > ul").classList.toggle("hidden--mobile");
     });
+
+    const view = match?.data?.view ? camelCase(match.data.view) : "home";
+
+    if (view == "home") {
+      document.querySelector("#newDuckBtn").addEventListener("click", () => {
+        const duckImg = document.getElementById("duckImage");
+        // Force a new image by adding a timestamp to bypass cache
+        duckImg.src = `https://random-d.uk/api/randomimg?${new Date().getTime()}`;
+        console.log("New duck loaded!");
+      });
+
+      document.querySelector("form").addEventListener("submit", event => {
+        event.preventDefault();
+
+        const inputList = event.target.elements;
+
+        const requestData = {
+          comment: inputList.confession.value
+
+        };
+        console.log("request Body", requestData);
+
+        axios
+          // Make a POST request to the API to create a new comment
+          .post(`${process.env.API_URL}/comments`, requestData)
+          .then(response => {
+            router.navigate("/home");
+
+          })
+          // If there is an error log it to the console
+          .catch(error => {
+            console.log("It puked", error);
+          });
+
+      })
+
+    }
+
   }
-});  
+
+});
+
 
 router.on({
   "/": () => render(),
