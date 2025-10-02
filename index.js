@@ -16,29 +16,31 @@ function render(state = store.home) {
   // router.updatePageLinks();
 }
 router.hooks({
-  before: (done, params) => {
+  before: async (done, params) => {
     const view = params?.data?.view ? camelCase(params.data.view) : "home";
     switch (view) {
       case "home":
-        axios
-          .get(
-            `${process.env.API_URL}/duckphoto`
-            // "http://localhost:3000/duckphoto"
-          )
-          .then(response => {
-            //  "https://random-d.uk/api/492.jpg" THIS WILL NEED TO BE CHANGED TO response.data.url
-            store.home.duckImage = response.data
-            // store.home.duckImage =
-            //   "https://random-d.uk/api/492.jpg"
+        try {
+          const duckResponse = await axios
+            .get(
+              `${process.env.API_URL}/duckphoto`
+              // "http://localhost:3000/duckphoto"
+            );
+          //  "https://random-d.uk/api/492.jpg" THIS WILL NEED TO BE CHANGED TO response.data.url
 
-            console.log(response)
+          // store.home.duckImage =
+          //   "https://random-d.uk/api/492.jpg"
+          const commentResponse = await axios.get(`${process.env.API_URL}/comments`);
 
-            done();
-          })
-          .catch((err) => {
-            console.log(err);
-            done();
-          });
+          store.home.duckImage = duckResponse.data;
+          store.home.comments = commentResponse.data;
+          console.log("duckResponse", duckResponse.data)
+          console.log("commentResponse", commentResponse.data);
+          done();
+        } catch (err) {
+          console.log(err);
+          done();
+        }
         break;
       default:
         done();
@@ -46,11 +48,40 @@ router.hooks({
   },
   already: (match) => {
     const view = match?.data?.view ? camelCase(match.data.view) : "home";
-
     render(store[view]);
+
+    if (view == "home") {
+
+
+      document.querySelector("form").addEventListener("submit", event => {
+        event.preventDefault();
+
+        const inputList = event.target.elements;
+
+        const requestData = {
+          comment: inputList.confession.value
+
+        };
+        console.log("request Body", requestData);
+
+        axios
+          // Make a POST request to the API to create a new comment
+          .post(`${process.env.API_URL}/comments`, requestData)
+          .then(response => {
+            store.home.comments.push(response.data);
+            router.navigate("/home");
+
+          })
+          // If there is an error log it to the console
+          .catch(error => {
+            console.log("It puked", error);
+          });
+
+      })
+
+    }
   },
   after: (match) => {
-    router.updatePageLinks();
 
     // add menu toggle to bars icon in nav bar
     document.querySelector(".fa-bars").addEventListener("click", () => {
@@ -93,7 +124,7 @@ router.hooks({
       })
 
     }
-
+    router.updatePageLinks();
   }
 
 });

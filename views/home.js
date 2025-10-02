@@ -30,6 +30,7 @@ export default (state) => html`
       placeholder="How'd You Duck Up?"
       required
     />
+    
   <br>
   <br>
   <button id="submit"
@@ -44,10 +45,13 @@ export default (state) => html`
     Submit a DuckUp
   </button>
 </form>
-
   <br>
   <br>
 
+  <!-- ${state.comments.map((comment) => comment.comment + "<br>")} -->
+
+    <br>
+  <br>
   <!-- Duck Image -->
   <img style="height: 20rem;" id="duckImage" src="https://random-d.uk/api/randomimg" alt="imageOfDuck" />
 
